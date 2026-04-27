@@ -282,6 +282,7 @@ Output:
 - `environment.can_listen_localhost` reports whether this runtime can bind a localhost listening socket (useful when the automation sandbox cannot start the dev stack itself).
 - `repo_status.map_platform` includes a short `git status` snapshot for the configured `MAP_PLATFORM_ROOT`, including:
   - branch divergence (ahead/behind) plus recent commit summaries when the branch is ahead, and
+  - `worktrees` from `git worktree list --porcelain` (useful for spotting stale/broken Codex worktrees), and
   - `capabilities` flags that indicate whether `.git/FETCH_HEAD` and `.git/worktrees/` are writable (useful for explaining why sync/push/worktree cleanup is blocked in some sandboxes).
 - `checks` may include:
   - `extracted_error` for JSON error responses.

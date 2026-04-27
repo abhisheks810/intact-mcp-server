@@ -192,6 +192,55 @@ function parseGitStatusBranchLine(line) {
   return result;
 }
 
+function parseGitWorktreeListPorcelain(text) {
+  const lines = String(text || "")
+    .split(/\r?\n/)
+    .map((line) => line.trimEnd());
+
+  const worktrees = [];
+  let current = null;
+
+  const flush = () => {
+    if (!current) return;
+    worktrees.push(current);
+    current = null;
+  };
+
+  for (const line of lines) {
+    if (!line) continue;
+    if (line.startsWith("worktree ")) {
+      flush();
+      current = { path: line.slice("worktree ".length).trim(), head: null, branch: null, detached: false };
+      continue;
+    }
+    if (!current) continue;
+
+    if (line.startsWith("HEAD ")) {
+      current.head = line.slice("HEAD ".length).trim() || null;
+      continue;
+    }
+    if (line.startsWith("branch ")) {
+      current.branch = line.slice("branch ".length).trim() || null;
+      continue;
+    }
+    if (line === "detached") {
+      current.detached = true;
+      continue;
+    }
+    if (line.startsWith("locked")) {
+      current.locked = line.slice("locked".length).trim() || true;
+      continue;
+    }
+    if (line.startsWith("prunable")) {
+      current.prunable = line.slice("prunable".length).trim() || true;
+      continue;
+    }
+  }
+
+  flush();
+  return worktrees;
+}
+
 async function mapPlatformGitStatusShort({ timeoutMs = 5000 } = {}) {
   const gitDir = path.join(mapPlatformRoot, ".git");
   const fetchHeadPath = path.join(gitDir, "FETCH_HEAD");
@@ -207,6 +256,21 @@ async function mapPlatformGitStatusShort({ timeoutMs = 5000 } = {}) {
       ? await isPathWritable(worktreesDir)
       : gitDirWritable,
   };
+
+  let worktrees = [];
+  let worktreesError = null;
+  try {
+    const { stdout } = await execFileAsync("git", ["worktree", "list", "--porcelain"], {
+      cwd: mapPlatformRoot,
+      timeout: timeoutMs,
+      maxBuffer: 1024 * 1024,
+    });
+    worktrees = parseGitWorktreeListPorcelain(stdout);
+  } catch (error) {
+    worktrees = [];
+    worktreesError = execErrorSummary(error) || "unknown error";
+  }
+
   try {
     const { stdout } = await execFileAsync("git", ["status", "--porcelain=v1", "--branch"], {
       cwd: mapPlatformRoot,
@@ -247,6 +311,8 @@ async function mapPlatformGitStatusShort({ timeoutMs = 5000 } = {}) {
       status: statusLines,
       branch,
       recent_commits_ahead: recentCommitsAhead,
+      worktrees,
+      worktrees_error: worktreesError,
       capabilities,
     };
   } catch (error) {
@@ -254,6 +320,8 @@ async function mapPlatformGitStatusShort({ timeoutMs = 5000 } = {}) {
       ok: false,
       root: mapPlatformRoot,
       error: execErrorSummary(error) || "unknown error",
+      worktrees,
+      worktrees_error: worktreesError,
       capabilities,
     };
   }
@@ -1549,6 +1617,26 @@ async function callTool(name, args = {}) {
       actions.push({
         action: "Sandbox limitation: git worktree cleanup blocked",
         note: "This environment cannot write .git/worktrees, so git worktree remove/prune will fail. Run cleanup outside the sandbox.",
+      });
+    }
+    const worktreeRows = Array.isArray(repoStatus.worktrees) ? repoStatus.worktrees : [];
+    const codexWorktrees = worktreeRows.filter(
+      (worktree) =>
+        worktree &&
+        typeof worktree.path === "string" &&
+        worktree.path.includes("/.codex/worktrees/") &&
+        worktree.path !== mapPlatformRoot,
+    );
+    if (codexWorktrees.length > 0) {
+      actions.push({
+        action: "Review/remove stale Codex map_platform worktrees",
+        note: "Multiple Codex worktrees can create Source Control noise. Remove only the worktrees you no longer need, then run `git worktree prune`.",
+        worktrees: codexWorktrees.slice(0, 10),
+        suggested_commands: [
+          `cd ${mapPlatformRoot} && git worktree list`,
+          ...codexWorktrees.slice(0, 10).map((worktree) => `git worktree remove --force ${worktree.path}`),
+          "git worktree prune",
+        ],
       });
     }
     if (repoStatus.ok && !repoStatus.clean) {
