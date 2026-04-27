@@ -46,16 +46,40 @@ Documentation/artifact hygiene: commit the existing daily-loop artifact set so i
 
 ## Verification
 
-- `git diff --check`
-- `npm test` in /Users/abhisheksrivastava/intact-mcp-server (no code changes expected)
+- `cd /Users/abhisheksrivastava/intact-mcp-server && npm test` (PASS)
+- `cd /Users/abhisheksrivastava/intact-mcp-server && git diff --check && git diff --cached --check` (PASS)
+- `cd /Users/abhisheksrivastava/map_platform && ./scripts/verify.sh` (PASS; frontend build skipped because `frontend/` is not writable)
+- `cd /Users/abhisheksrivastava/map_platform && git diff --check && git diff --cached --check` (PASS)
 
 ## Finalization Status
 
-- Permanent changes: artifact tracking + run log + implementation result.
+- Permanent changes:
+  - Committed in /Users/abhisheksrivastava/intact-mcp-server: `79a2837` (tracks `data/*` + `exports/*` artifacts; adds `.gitattributes` for binary PDFs/PNGs).
 - Deferred:
   - Any upstream sync/push actions if DNS / sandbox git write restrictions persist.
 - Discardable: none.
 
 ## Blockers
 
-- If `git push` fails, likely due to the known sandbox DNS restriction (“Could not resolve host: github.com” / “Could not resolve hostname github.com”).
+- map_platform upstream sync is blocked (git cannot write `.git/FETCH_HEAD`):
+  - `cd /Users/abhisheksrivastava/map_platform && git fetch origin` → `error: cannot open '.git/FETCH_HEAD': Operation not permitted`
+- Network/DNS is blocked for pushes:
+  - `cd /Users/abhisheksrivastava/map_platform && git push origin main`:
+    - `ssh: Could not resolve hostname github.com: -65563`
+    - `fatal: Could not read from remote repository.`
+  - `cd /Users/abhisheksrivastava/intact-mcp-server && git push origin main`:
+    - `fatal: unable to access 'https://github.com/abhisheks810/intact-mcp-server.git/': Could not resolve host: github.com`
+- Codex map_platform worktree cleanup is blocked (cannot delete `.git/worktrees/*` entries or the worktree dir):
+  - Detected worktrees:
+    - `/Users/abhisheksrivastava/.codex/worktrees/2206/map_platform`
+    - `/Users/abhisheksrivastava/.codex/worktrees/d609/map_platform`
+    - `/Users/abhisheksrivastava/.codex/worktrees/e89b/map_platform`
+  - Attempt: `git worktree remove --force /Users/abhisheksrivastava/.codex/worktrees/2206/map_platform`:
+    - `error: failed to delete '/Users/abhisheksrivastava/.codex/worktrees/2206/map_platform': Operation not permitted`
+    - `error: failed to delete '.git/worktrees/map_platform': Operation not permitted`
+
+## Terminal State
+
+(B) push failed due to external blocker (DNS / sandbox `.git` write restrictions). Prior evidence with >=3 push retries over >=5 minutes and exact stderr is recorded in:
+
+- `/Users/abhisheksrivastava/intact-mcp-server/data/agent-runs/2026-04-27T14-11-16Z-supervised-map-platform-loop-00.md`

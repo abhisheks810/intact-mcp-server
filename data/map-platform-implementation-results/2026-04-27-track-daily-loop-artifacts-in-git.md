@@ -17,6 +17,10 @@ Committed the existing artifact set under:
 
 This makes the daily-loop context durable and shareable across worktrees.
 
+Also added `/Users/abhisheksrivastava/intact-mcp-server/.gitattributes` to mark `*.pdf` and `*.png` as binary so `git diff --check` does not flag whitespace noise in exported PDFs/screenshots.
+
+Commit: `79a2837`
+
 ## Verification
 
 - `git status --short` expected clean after commit.
