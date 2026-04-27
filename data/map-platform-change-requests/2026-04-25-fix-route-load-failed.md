@@ -28,3 +28,10 @@ Resolve the user feedback item: the UI should show a route after pressing **Get 
 ## Approval Note
 
 Approved based on `data/user-feedback/map-platform-feedback.md` tested at 2026-04-25 23:36 EDT requesting that routing works in the UI.
+
+## Follow-up
+
+The dev-interface doctor default route coordinates were outside the `custom_router` Delhi-core fixture snap radius, causing false “route failed” signals during daily review. Track and apply:
+
+- Change request: `data/map-platform-change-requests/2026-04-27-fix-route-example-coordinates.md`
+- Patch: `/Users/abhisheksrivastava/intact-mcp-server/exports/map-platform/patches/2026-04-27-fix-route-example-coordinates.patch`

@@ -1,0 +1,42 @@
+--- a/scripts/doctor-dev-interface.sh
++++ b/scripts/doctor-dev-interface.sh
+@@ -12,7 +12,7 @@
+   --backend URL         Backend base URL (default: http://localhost:8000)
+   --custom-router URL   Custom router base URL (default: http://localhost:8090)
+   --osrm URL            OSRM base URL (default: http://localhost:5001)
+-  --origin LAT,LON      Route origin (default: 28.6139,77.2090)
++  --origin LAT,LON      Route origin (default: 28.6314022,77.2193791)
+   --destination LAT,LON Route destination (default: 28.6129,77.2295)
+   --timeout SECS        Curl timeout seconds (default: 5)
+   --skip-listen-check   Skip checking whether localhost sockets can bind
+@@ -23,7 +23,7 @@
+ BACKEND_URL="http://localhost:8000"
+ CUSTOM_ROUTER_URL="http://localhost:8090"
+ OSRM_URL="http://localhost:5001"
+-ORIGIN="28.6139,77.2090"
++ORIGIN="28.6314022,77.2193791"
+ DESTINATION="28.6129,77.2295"
+ TIMEOUT_SECS="5"
+ SKIP_LISTEN_CHECK="${SKIP_LISTEN_CHECK:-0}"
+--- a/README.md
++++ b/README.md
+@@ -112,7 +112,7 @@
+ 3. Quick Tests
+ Backend health: curl http://localhost:8000/
+ Geocode via backend proxy: curl "http://localhost:8000/geocode?address=Connaught%20Place%2C%20Delhi&limit=1"
+-Route via backend (defaults to custom router in non-Docker local dev): curl "http://localhost:8000/route?origin=28.6139,77.2090&destination=28.6129,77.2295"
++Route via backend (defaults to custom router in non-Docker local dev): curl "http://localhost:8000/route?origin=28.6314022,77.2193791&destination=28.6129,77.2295"
+ Route via custom router: curl "http://localhost:8090/route?origin=28.6314022,77.2193791&destination=28.6129,77.2295"
+ Route directly from OSRM: curl "http://localhost:5001/route/v1/driving/77.2090,28.6139;77.2295,28.6129?overview=false"
+
+--- a/frontend/src/components/SearchBar.jsx
++++ b/frontend/src/components/SearchBar.jsx
+@@ -133,7 +133,7 @@
+         <label>Origin</label>
+         <input
+           className="input"
+-          placeholder="Connaught Place, Delhi OR 28.6315,77.2167"
++          placeholder="Connaught Place, Delhi OR 28.6314022,77.2193791"
+           value={origin}
+           onChange={(e) => { setOrigin(e.target.value); setShowSO(true); }}
+           onFocus={() => setShowSO(true)}
