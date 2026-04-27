@@ -1,0 +1,25 @@
+{
+  "name": "intact-mcp-server",
+  "version": "0.1.0",
+  "description": "Strategy and operating-memory MCP server for the Intact umbrella organisation workspace.",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "intact-mcp-server": "./src/server.js"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node test/smoke-test.js",
+    "report:map-platform": "node scripts/build_daily_report_pdf.js data/daily-reports/2026-04-25-map-platform-daily-report.md"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "mcp",
+    "strategy",
+    "agents",
+    "planning"
+  ],
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "intact": {
+      "command": "node",
+      "args": [
+        "/Users/abhisheksrivastava/intact-mcp-server/src/server.js"
+      ],
+      "env": {
+        "STRATEGY_ROOT": "/Users/abhisheksrivastava/host_strategy",
+        "INTACT_WORKSPACE": "/Users/abhisheksrivastava/intact-mcp-server/data",
+        "MAP_PLATFORM_ROOT": "/Users/abhisheksrivastava/map_platform"
+      }
+    }
+  }
+}
