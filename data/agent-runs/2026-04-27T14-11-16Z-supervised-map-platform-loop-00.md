@@ -56,6 +56,7 @@ Dev-interface reliability: surface map_platform finalization blockers (sandbox w
 
 - Permanent changes:
   - intact-mcp-server tool + docs + implementation-result artifacts updated (see “Changes Made”).
+  - Committed in /Users/abhisheksrivastava/intact-mcp-server: `6c26639`.
 - Deferred:
   - End-to-end UI validation of **Get Route** remains blocked in this environment (cannot start the local dev stack reliably inside the sandbox).
   - Upstream sync/push/worktree cleanup remain blocked (see Blockers).
@@ -73,6 +74,9 @@ Dev-interface reliability: surface map_platform finalization blockers (sandbox w
     - stderr:
       - `ssh: Could not resolve hostname github.com: -65563`
       - `fatal: Could not read from remote repository.`
+- intact-mcp-server push is blocked (DNS):
+  - Attempt (2026-04-27T14:20:28Z): `cd /Users/abhisheksrivastava/intact-mcp-server && git push origin main`
+    - stderr: `fatal: unable to access 'https://github.com/abhisheks810/intact-mcp-server.git/': Could not resolve host: github.com`
   - Attempt 2 (2026-04-27T14:15:01Z): `git push origin main`
     - stderr:
       - `ssh: Could not resolve hostname github.com: -65563`
