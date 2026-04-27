@@ -1,0 +1,184 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Length 1855 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+14 TL
+(DAILY REPORT: MAP PLATFORM) Tj
+T*
+T*
+T*
+(Date: 2026-04-25) Tj
+T*
+(Window: setup session) Tj
+T*
+T*
+(Summary) Tj
+T*
+T*
+(Built the first supervised map-platform development loop. The MCP server now supports) Tj
+T*
+(strategy context, map repo inspection, patch proposals, change requests, guarded writes,) Tj
+T*
+(and implementation result records.) Tj
+T*
+T*
+(Implemented) Tj
+T*
+T*
+(- Added MVP Place contract to `map_platform`.) Tj
+T*
+(- Updated geocoder normalization.) Tj
+T*
+(- Updated frontend search suggestions to tolerate richer place metadata.) Tj
+T*
+(- Added `docs/place_contract.md`.) Tj
+T*
+(- Added local verification script.) Tj
+T*
+(- Added daily operating model docs.) Tj
+T*
+(- Added local non-Docker dev stack scripts for geocoder, backend, and frontend.) Tj
+T*
+(- Added custom router phase 1 as the first OSRM replacement path.) Tj
+T*
+T*
+(Agents Run) Tj
+T*
+T*
+(- `routing-tiles-agent`: implemented Custom Router Phase 1 and recorded the run log.) Tj
+T*
+T*
+(Improved) Tj
+T*
+T*
+(- Map platform now has a stable data contract for local discovery, provenance,) Tj
+T*
+(confidence, and accessibility metadata.) Tj
+T*
+(- Agent workflow now has explicit review artifacts before implementation.) Tj
+T*
+T*
+(Verified) Tj
+T*
+T*
+(- `./scripts/verify.sh` passed.) Tj
+T*
+(- Frontend production build passed.) Tj
+T*
+(- MCP smoke test passed.) Tj
+T*
+(- Backend health, geocoder health, backend geocode, and frontend HTML checks passed) Tj
+T*
+(locally.) Tj
+T*
+(- Custom router health, direct route, backend route via `ROUTER_PROVIDER=intact`, and) Tj
+T*
+(full verification passed.) Tj
+T*
+T*
+(Blockers) Tj
+T*
+T*
+(- Production-quality custom routing still requires OSM graph ingestion, edge snapping,) Tj
+T*
+(turn restrictions, and route profiles.) Tj
+T*
+(- Full OSRM route testing still requires OSRM data and router service on) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 1261 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+14 TL
+(`localhost:5001`.) Tj
+T*
+(- Frontend dependencies report two moderate npm vulnerabilities.) Tj
+T*
+(- No hosted preview/development deployment target is configured yet.) Tj
+T*
+T*
+(Dev Interface) Tj
+T*
+T*
+(- Local frontend URL: http://localhost:3001 for the current run, or) Tj
+T*
+(http://localhost:3000 when free.) Tj
+T*
+(- Backend URL: http://localhost:8000) Tj
+T*
+(- Geocoder URL: http://localhost:8080) Tj
+T*
+(- Custom router URL: http://localhost:8090) Tj
+T*
+(- Status: local frontend/backend/geocoder/custom-router path is running; hosted preview) Tj
+T*
+(not yet configured.) Tj
+T*
+T*
+(User Feedback Needed) Tj
+T*
+T*
+(- Confirm whether the Place contract matches intended local discovery needs.) Tj
+T*
+(- Confirm preferred preview deployment target.) Tj
+T*
+T*
+(Next Steps) Tj
+T*
+T*
+(- Add Place Detail Panel.) Tj
+T*
+(- Build custom router phase 2: graph artifact format and OSM extract parsing.) Tj
+T*
+(- Configure a durable dev/preview deployment target.) Tj
+T*
+(- Continue the development loop outside the 2 AM-7 AM ET quiet window.) Tj
+T*
+T*
+(Decisions Needed From User) Tj
+T*
+T*
+(- Preferred hosted dev/preview target.) Tj
+T*
+(- Whether custom routing should prioritize car, walking, or two-wheeler profile first.) Tj
+T*
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 6 0 R >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000002098 00000 n 
+0000002224 00000 n 
+0000003537 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+3663
+%%EOF

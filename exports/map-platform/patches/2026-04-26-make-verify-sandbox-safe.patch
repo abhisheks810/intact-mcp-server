@@ -1,0 +1,16 @@
+--- a/scripts/verify.sh
++++ b/scripts/verify.sh
+@@ -18,6 +18,11 @@
+-if [ -d "$ROOT/frontend/node_modules" ]; then
+-  npm --prefix "$ROOT/frontend" run build
++if [ "${SKIP_FRONTEND_BUILD:-0}" = "1" ]; then
++  echo "Skipping frontend build: SKIP_FRONTEND_BUILD=1."
++elif [ ! -w "$ROOT/frontend" ]; then
++  echo "Skipping frontend build: frontend/ is not writable in this environment."
++  echo "Run locally with a writable frontend tree: npm --prefix frontend run build"
++elif [ -d "$ROOT/frontend/node_modules" ]; then
++  npm --prefix "$ROOT/frontend" run build
+ else
+   echo "Skipping frontend build: frontend/node_modules is not installed."
+   echo "Run: npm --prefix frontend install && npm --prefix frontend run build"
+ fi
