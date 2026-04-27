@@ -81,3 +81,23 @@ Documentation/artifact hygiene: commit the existing daily-loop artifact set so i
 ## Terminal State
 
 (B) push failed due to external blocker (DNS / sandbox `.git` write restrictions) after 3 retries over 300 seconds with exact stderr captured.
+
+## Next Commands (run outside this sandbox)
+
+```bash
+# Push intact-mcp-server commits
+cd /Users/abhisheksrivastava/intact-mcp-server
+git push origin main
+
+# Sync + push map_platform (if needed)
+cd /Users/abhisheksrivastava/map_platform
+git fetch origin
+git pull --ff-only
+git push origin main
+
+# Cleanup Codex worktrees
+git worktree remove --force /Users/abhisheksrivastava/.codex/worktrees/2206/map_platform
+git worktree remove --force /Users/abhisheksrivastava/.codex/worktrees/d609/map_platform
+git worktree remove --force /Users/abhisheksrivastava/.codex/worktrees/e89b/map_platform
+git worktree prune
+```
