@@ -49,6 +49,7 @@ The local non-Docker stack is intended for daily review even when OSRM data is n
 - Start local stack: `./scripts/dev-local-stack.sh`
 - In the browser UI, press **Get Route** with Delhi coordinates (from docs examples).
 - Confirm the backend `/route` returns JSON with `geometry` and no fetch error.
+- QA note: the original screenshot uses a long-distance origin/destination pair; that can still fail in local-only routing modes (expected when only a small fixture graph is available).
 
 ## Risks
 

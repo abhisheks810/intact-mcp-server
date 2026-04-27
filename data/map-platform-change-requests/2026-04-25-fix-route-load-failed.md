@@ -23,6 +23,7 @@ Resolve the user feedback item: the UI should show a route after pressing **Get 
 - `./scripts/verify.sh`
 - `./scripts/dev-local-stack.sh`
 - Browser UI: confirm **Get Route** works for Delhi example coordinates.
+- QA note: start with two nearby points in a region covered by the local routing provider; cross-region routes may fail unless the merged/global OSRM dataset is running (the `custom_router` fixture path is intentionally limited).
 
 ## Approval Note
 
