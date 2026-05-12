@@ -13,10 +13,27 @@ Ensure the default local dev workflow can successfully render a route in the UI 
 ## Current State / Next Step
 
 - Approved change request: `data/map-platform-change-requests/2026-04-25-fix-route-load-failed.md`
+- Latest loop failure context (preflight DNS gate): `data/map-platform-implementation-results/2026-05-11-loop-preflight-dns-gate-failure.md`
+- Prior loop failure context (preflight DNS gate): `data/map-platform-implementation-results/2026-05-10-loop-preflight-dns-gate-failure.md`
 - Verified patch is exported and apply-ready:
   - `/Users/abhisheksrivastava/intact-mcp-server/exports/map-platform/patches/2026-04-26-fix-route-load-failed.patch`
 - Observed repo state (2026-04-26): the patch is already present in `/Users/abhisheksrivastava/map_platform`’s working tree (patch reverse-check succeeds).
 - Verification note: `/Users/abhisheksrivastava/map_platform/scripts/verify.sh` now skips the frontend build when `frontend/` is not writable, so verification is no longer blocked by Vite `EPERM` in this sandbox.
+- Blocker update (2026-04-29): the daily supervised loop is currently failing earlier at the mandatory preflight gate due to `github.com` DNS resolution failure. See:
+  - `/Users/abhisheksrivastava/intact-mcp-server/data/agent-runs/2026-04-29T13-03-35Z-supervised-map-platform-loop-00.md`
+- Blocker update (2026-04-29 21:07 EDT): preflight gate still fails with the same DNS error. See:
+  - `/Users/abhisheksrivastava/intact-mcp-server/data/agent-runs/2026-04-30T01-07-04Z-supervised-map-platform-loop-00.md`
+  - `/Users/abhisheksrivastava/intact-mcp-server/data/agent-runs/2026-04-29T22-12-26Z-supervised-map-platform-loop-00.md`
+  - `/Users/abhisheksrivastava/intact-mcp-server/data/agent-runs/2026-04-30T00-05-00Z-supervised-map-platform-loop-00.md`
+  - `/Users/abhisheksrivastava/intact-mcp-server/data/agent-runs/2026-04-30T00-52-46Z-supervised-map-platform-loop-00.md`
+  - `/Users/abhisheksrivastava/intact-mcp-server/data/agent-runs/2026-04-30T01-05-22Z-supervised-map-platform-loop-00.md`
+- Blocker update (2026-04-30 10:08 EDT): preflight gate still fails (DNS). See:
+  - `/Users/abhisheksrivastava/intact-mcp-server/data/agent-runs/2026-04-30T14-08-53Z-supervised-map-platform-loop-00.md`
+- Blocker update (2026-05-01 06:01 EDT): preflight gate still fails (DNS). See:
+  - `/Users/abhisheksrivastava/intact-mcp-server/data/agent-runs/2026-05-01T10-01-59Z-supervised-map-platform-loop-00.md`
+- Blocker update (2026-05-11): preflight gate still fails (DNS resolution for `github.com`). See:
+  - `/Users/abhisheksrivastava/.codex/automations/map-platform-daily-agent-loop/run_logs/2026-05-11T16-11-44Z-supervised-map-platform-loop-00.md`
+  - `/Users/abhisheksrivastava/intact-mcp-server/data/map-platform-implementation-results/2026-05-11-loop-preflight-dns-gate-failure.md`
 - Blocker: end-to-end UI validation cannot be run inside this automation sandbox because the runtime cannot bind localhost listening ports (`PermissionError: [Errno 1] Operation not permitted`). This prevents starting the local dev stack from within the automation.
 - Next: manually validate **Get Route** in the dev UI outside the sandbox (then commit/push if needed).
 
