@@ -4,7 +4,7 @@ Created: 2026-04-25T23:49:00-04:00
 Agent: backend-api-agent
 Repository: /Users/abhisheksrivastava/map_platform
 Related feedback: data/user-feedback/map-platform-feedback.md (2026-04-25)
-Status: blocked
+Status: in-progress
 
 ## Objective
 
@@ -36,6 +36,7 @@ Ensure the default local dev workflow can successfully render a route in the UI 
   - `/Users/abhisheksrivastava/intact-mcp-server/data/map-platform-implementation-results/2026-05-11-loop-preflight-dns-gate-failure.md`
 - Blocker: end-to-end UI validation cannot be run inside this automation sandbox because the runtime cannot bind localhost listening ports (`PermissionError: [Errno 1] Operation not permitted`). This prevents starting the local dev stack from within the automation.
 - Next: manually validate **Get Route** in the dev UI outside the sandbox (then commit/push if needed).
+- Blocker update (2026-05-12): the mandatory preflight gate passed in host-network context, and `/Users/abhisheksrivastava/map_platform/scripts/verify.sh` now runs route-contract tests before frontend validation. End-to-end browser validation for **Get Route** remains the next manual QA step.
 
 ```bash
 cd /Users/abhisheksrivastava/map_platform
