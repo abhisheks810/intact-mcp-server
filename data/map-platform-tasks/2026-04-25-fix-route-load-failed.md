@@ -4,7 +4,7 @@ Created: 2026-04-25T23:49:00-04:00
 Agent: backend-api-agent
 Repository: /Users/abhisheksrivastava/map_platform
 Related feedback: data/user-feedback/map-platform-feedback.md (2026-04-25)
-Status: in-progress
+Status: validated
 
 ## Objective
 
@@ -37,6 +37,7 @@ Ensure the default local dev workflow can successfully render a route in the UI 
 - Blocker: end-to-end UI validation cannot be run inside this automation sandbox because the runtime cannot bind localhost listening ports (`PermissionError: [Errno 1] Operation not permitted`). This prevents starting the local dev stack from within the automation.
 - Next: manually validate **Get Route** in the dev UI outside the sandbox (then commit/push if needed).
 - Blocker update (2026-05-12): the mandatory preflight gate passed in host-network context, and `/Users/abhisheksrivastava/map_platform/scripts/verify.sh` now runs route-contract tests before frontend validation. End-to-end browser validation for **Get Route** remains the next manual QA step.
+- Validation update (2026-05-12): user manually launched the local dev UI and confirmed they can get the route. The original **Get Route** -> `load failed` blocker is validated as resolved for the local QA path.
 
 ```bash
 cd /Users/abhisheksrivastava/map_platform
@@ -67,6 +68,7 @@ The local non-Docker stack is intended for daily review even when OSRM data is n
 - Start local stack: `./scripts/dev-local-stack.sh`
 - In the browser UI, press **Get Route** with Delhi coordinates (from docs examples).
 - Confirm the backend `/route` returns JSON with `geometry` and no fetch error.
+- 2026-05-12 manual QA: user confirmed the UI can get the route.
 - QA note: the original screenshot uses a long-distance origin/destination pair; that can still fail in local-only routing modes (expected when only a small fixture graph is available).
 
 ## Risks
