@@ -100,9 +100,12 @@ See [examples/mcp-client-config.json](examples/mcp-client-config.json).
 - `run_review_checklist`
 - `create_research_note`
 - `list_map_platform_files`
+- `list_map_platform_directory`
 - `read_map_platform_file`
 - `search_map_platform`
 - `map_platform_git_status`
+- `map_platform_git_diff`
+- `run_map_platform_verify`
 - `doctor_map_platform_verify`
 - `doctor_map_platform_dev_interface`
 - `doctor_map_platform_place_contract`

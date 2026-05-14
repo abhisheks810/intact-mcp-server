@@ -1,10 +1,28 @@
 import { spawn } from "node:child_process";
+import { execFileSync } from "node:child_process";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
 const serverPath = path.join(repoRoot, "src", "server.js");
+const tempRoot = mkdtempSync(path.join(os.tmpdir(), "intact-mcp-smoke-"));
+const tempMapRoot = path.join(tempRoot, "map_platform");
+const tempWorkspaceRoot = path.join(tempRoot, "workspace");
+mkdirSync(path.join(tempMapRoot, "backend"), { recursive: true });
+mkdirSync(path.join(tempMapRoot, "docs"), { recursive: true });
+mkdirSync(path.join(tempMapRoot, "scripts"), { recursive: true });
+writeFileSync(path.join(tempMapRoot, "README.md"), "# Smoke Map Platform\n", "utf8");
+writeFileSync(path.join(tempMapRoot, "backend", "main.py"), "print('smoke')\n", "utf8");
+writeFileSync(path.join(tempMapRoot, "docs", "existing.md"), "# Existing\n", "utf8");
+writeFileSync(path.join(tempMapRoot, "scripts", "verify.sh"), "#!/usr/bin/env bash\nset -euo pipefail\necho verify ok\n", "utf8");
+execFileSync("git", ["init", "-b", "main"], { cwd: tempMapRoot });
+execFileSync("git", ["config", "user.email", "smoke@example.test"], { cwd: tempMapRoot });
+execFileSync("git", ["config", "user.name", "MCP Smoke"], { cwd: tempMapRoot });
+execFileSync("git", ["add", "."], { cwd: tempMapRoot });
+execFileSync("git", ["commit", "-m", "initial"], { cwd: tempMapRoot });
 
 let nextId = 1;
 let buffer = Buffer.alloc(0);
@@ -37,8 +55,9 @@ const child = spawn("node", [serverPath], {
   env: {
     ...process.env,
     STRATEGY_ROOT: "/Users/abhisheksrivastava/host_strategy",
-    INTACT_WORKSPACE: path.join(repoRoot, "data", "test-smoke"),
-    MAP_PLATFORM_ROOT: "/Users/abhisheksrivastava/map_platform",
+    INTACT_WORKSPACE: tempWorkspaceRoot,
+    MAP_PLATFORM_ROOT: tempMapRoot,
+    MAP_PLATFORM_WRITE_ENABLED: "true",
   },
   stdio: ["pipe", "pipe", "pipe"],
 });
@@ -67,13 +86,17 @@ function request(method, params = undefined) {
     const timeout = setTimeout(() => {
       pending.delete(id);
       reject(new Error(`Timed out waiting for ${method}`));
-    }, 5000);
+    }, 10000);
     pending.set(id, (response) => {
       clearTimeout(timeout);
       if (response.error) reject(new Error(response.error.message));
       else resolve(response.result);
     });
   });
+}
+
+function toolJson(result) {
+  return JSON.parse(result.content?.[0]?.text || "{}");
 }
 
 async function main() {
@@ -96,6 +119,11 @@ async function main() {
   }
   if (!listedTools.tools.some((tool) => tool.name === "doctor_map_platform_verify")) {
     throw new Error("doctor_map_platform_verify missing");
+  }
+  for (const requiredTool of ["list_map_platform_directory", "map_platform_git_diff", "run_map_platform_verify"]) {
+    if (!listedTools.tools.some((tool) => tool.name === requiredTool)) {
+      throw new Error(`${requiredTool} missing`);
+    }
   }
 
   const resources = await request("resources/list");
@@ -120,6 +148,14 @@ async function main() {
     arguments: { path: "README.md" },
   });
   if (!mapRead.content?.[0]?.text) throw new Error("map_platform file read returned no content");
+
+  const mapDir = await request("tools/call", {
+    name: "list_map_platform_directory",
+    arguments: { path: "backend" },
+  });
+  if (!mapDir.content?.[0]?.text.includes("backend/main.py")) {
+    throw new Error("map_platform directory listing did not include backend/main.py");
+  }
 
   const mapStatus = await request("tools/call", {
     name: "map_platform_git_status",
@@ -160,6 +196,7 @@ async function main() {
   if (!metadata.content?.[0]?.text.includes("sha256")) {
     throw new Error("map_platform metadata returned invalid content");
   }
+  const metadataJson = toolJson(metadata);
 
   const proposal = await request("tools/call", {
     name: "create_map_platform_patch_proposal",
@@ -206,6 +243,37 @@ async function main() {
   if (!changeRequest.content?.[0]?.text.includes("map-platform-change-requests")) {
     throw new Error("change request creation returned invalid content");
   }
+  const changeRequestJson = toolJson(changeRequest);
+
+  const writeResult = await request("tools/call", {
+    name: "write_map_platform_file",
+    arguments: {
+      path: "README.md",
+      content: "# Smoke Map Platform\n\nUpdated through MCP write smoke.\n",
+      expected_sha256: metadataJson.sha256,
+      change_request_path: changeRequestJson.path,
+      approval_note: "Smoke test scoped write.",
+    },
+  });
+  if (!writeResult.content?.[0]?.text.includes("new_sha256")) {
+    throw new Error("write_map_platform_file returned invalid content");
+  }
+
+  const diffResult = await request("tools/call", {
+    name: "map_platform_git_diff",
+    arguments: {},
+  });
+  if (!diffResult.content?.[0]?.text.includes("Updated through MCP write smoke")) {
+    throw new Error("map_platform_git_diff did not include MCP write");
+  }
+
+  const verifyResult = await request("tools/call", {
+    name: "run_map_platform_verify",
+    arguments: { timeout_ms: 10000 },
+  });
+  if (!toolJson(verifyResult).ok) {
+    throw new Error("run_map_platform_verify did not pass");
+  }
 
   const agentRun = await request("tools/call", {
     name: "record_agent_run",
@@ -241,9 +309,13 @@ async function main() {
 }
 
 main()
-  .finally(() => child.kill())
+  .finally(() => {
+    child.kill();
+    rmSync(tempRoot, { recursive: true, force: true });
+  })
   .catch((error) => {
     console.error(error);
     child.kill();
+    rmSync(tempRoot, { recursive: true, force: true });
     process.exit(1);
   });
